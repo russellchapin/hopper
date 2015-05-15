@@ -1,6 +1,6 @@
 /**
 
-SCROLL HOPPER! v0.1.0 - 2015-05-15
+SCROLL HOPPER! v0.2.0 - 2015-05-15
 * https://github.com/russellchapin/hopper
 * Copyright (c) 2015 Russell Chapin | San Diego Union Tribune LLC; Licensed MIT 
  
