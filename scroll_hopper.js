@@ -1,7 +1,7 @@
 /**
 
-SCROLL HOPPER! v0.2.0 - 2015-05-15
-* https://github.com/russellchapin/hopper
+SCROLL HOPPER! v1.0.0 - 2015-05-19
+* https://github.com/mindgruve/initr
 * Copyright (c) 2015 Russell Chapin | San Diego Union Tribune LLC; Licensed MIT 
  
 1. Measure height of article div and sidebar div to find out how much remaining space is left from the bottom of the Facebook comments section. 
@@ -78,10 +78,8 @@ r_app.scroll_loader = function() {
 
         var para = document.createElement("div"),
             element = $('<div id="ad_box_wrapper" class="span3 col alpha omega"></div>');
-            // load one ad before the a_wire stories to simplify the logic
             auto_ad();
-            // load the a_wire stories
-            a_wire_loader();
+
             
             element.height(($("article").height() - $("#sidebar").height()) - 1200);
             //element.height(($("#comments-module").offset().top + $("#comments-module").outerHeight(true)));
@@ -283,29 +281,6 @@ r_app.scroll_loader = function() {
     Creates a "Top Stories" div and poplates it with data returned from the API
     TODO (chapin): make a_wire_loader and article_loader work together
     */
-    function a_wire_loader() {
-        var wrapper = document.getElementById("sidebar"),
-            module = document.createElement("div"),
-            title = document.createElement("h3"),
-            link_wrap = document.createElement("ul");
-
-        $(link_wrap).data('article-type', 'a-wire');
-        module.id = "a_wire";
-        title.innerHTML = "Top Stories";
-        link_wrap.id = "a_wire_wrapper";
-
-        wrapper.appendChild(module);
-        module.appendChild(title);
-        module.appendChild(link_wrap);
-
-        data = get_data(3);
-
-        console.log(link_wrap);
-
-        ajax_call("/api/widgets/v1/news/section/top-stories/", data, link_wrap, callback_receiver);
-
-        console.log('Article inserted.');
-    }
     var count = 0;
     function ad_loader(count) {
         $("#ad_box_wrapper").append('<div data-boxy="true" id="dfp_300x250_2" data-slot="300x250_2" data-size="300x250" class="count'+count+'"></div>');
