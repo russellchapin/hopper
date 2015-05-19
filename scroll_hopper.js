@@ -1,7 +1,7 @@
 /**
 
-SCROLL HOPPER! v1.0.0 - 2015-05-19
-* https://github.com/mindgruve/initr
+HOPPER! v1.0.0 - 2015-05-19
+* https://github.com/russellchapin/hopper
 * Copyright (c) 2015 Russell Chapin | San Diego Union Tribune LLC; Licensed MIT 
  
 1. Measure height of article div and sidebar div to find out how much remaining space is left from the bottom of the Facebook comments section. 
