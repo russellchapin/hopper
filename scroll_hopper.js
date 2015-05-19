@@ -1,6 +1,6 @@
 /**
 
-HOPPER! v1.0.0 - 2015-05-19
+SCROLL HOPPER! v0.1.0 - 2015-05-15
 * https://github.com/russellchapin/hopper
 * Copyright (c) 2015 Russell Chapin | San Diego Union Tribune LLC; Licensed MIT 
  
@@ -18,13 +18,13 @@ HOPPER! v1.0.0 - 2015-05-19
 
 */
 
-var r_app = window.r_app || {};
+var app = window.app || {};
 
-r_app.scroll_loader = function() {
+app.scroll_loader = function() {
 
     $(window).load(function() {
         // call the init function eventually
-        window.setTimeout(init, 2000);
+        window.setTimeout(init, 5000);
     });
 
     var article_cache = {},
@@ -32,32 +32,14 @@ r_app.scroll_loader = function() {
         last_index = 0;
 
     function init(){
-        r_app._article_height = $("article").height();
+        app._article_height = $("article").height();
         var content_height = $("article").height();
             rendered_sidebar = $("#sidebar").height();
-            //real_wrap_height = $("article" ).height() - $("#sidebar").height();
-
-        console.log( "Ad box test is ready." );
         /**
         * If space below sidebar is > 800px then work needs to be done.
         */
-
-        if (content_height - rendered_sidebar > 1200 && $(window).width() > 1200){
-
+        if (content_height - rendered_sidebar > 920 && $(window).width() > 960){
             ad_box_draw(0);
-/*
-            try {
-                // if facebook comments are enabled on this page
-                if (FB != undefined) {
-                    // listen for the render callback
-                    FB.Event.subscribe("xfbml.render", recalc);
-                }
-            } 
-            catch(err) {
-                console.log(err);
-            }
-*/
-
         }
     }
 
@@ -72,24 +54,17 @@ r_app.scroll_loader = function() {
         }
     }
 
-//var mod_number;
     function  ad_box_draw(ad_number) {
         console.log( "Ad box is drawing." );
-
         var para = document.createElement("div"),
             element = $('<div id="ad_box_wrapper" class="span3 col alpha omega"></div>');
-            auto_ad();
-
-            
-            element.height(($("article").height() - $("#sidebar").height()) - 1200);
-            //element.height(($("#comments-module").offset().top + $("#comments-module").outerHeight(true)));
+            element.height($("article").height() - $("#sidebar").height());
             // push it into the dom
             element.insertAfter("#sidebar");
             mod_number = ad_number;
             article_loader();
-            //mod_loader();
     }
-
+/*
     function auto_ad(){
         var para = document.createElement("div"),
             element = $("#sidebar");
@@ -102,7 +77,7 @@ r_app.scroll_loader = function() {
             boxy_ad.removeAttr("data-slot");
             boxy_ad.removeAttr("data-boxy");
     }
-
+*/
     /**
         Fetch defaults for an API call
     */
@@ -110,12 +85,12 @@ r_app.scroll_loader = function() {
         var data = {};
         data.limit = limit;
 
-        if(r_app.photoWidth){
-            data.photo_width = r_app.photoWidth;
+        if(app.photoWidth){
+            data.photo_width = app.photoWidth;
         }
 
-        if(r_app.photoHeight){
-            data.photo_height = r_app.photoHeight;
+        if(app.photoHeight){
+            data.photo_height = app.photoHeight;
         }
 
         data.lead_photo__isnull =  'False';
@@ -168,17 +143,10 @@ r_app.scroll_loader = function() {
             item.lead_photo = '';
             item.h3_class = 'class="nav-stories-no-photo"';
         }
-        /*
-        if(i && (i == 0 || (i%3) == 0)){
-            console.log(i);
-            article_link.className = "scroll_loader_stories triplet";
-        }
-        */
-        //else{
-            article_link.className = "scroll_loader_stories";
+            article_link.className = "scroll_loader_stories recommended";
         //}
-        element.appendChild(article_link);
 
+        element.appendChild(article_link);
         article_link.innerHTML = create_html(item);
     }
     /**
@@ -203,11 +171,9 @@ r_app.scroll_loader = function() {
     @param {json} json returned from an API call
     @param {element} element to work with
     */
-    var ad_match = 0;
     function box_creator(json, element) {
 
         if(json.items.length === 1){
-            // if we are here then nothing was returned from the api (empty section perhaps?)
             element.empty();
             element.prepend(get_error_message());
         } else {
@@ -221,32 +187,45 @@ r_app.scroll_loader = function() {
 
             var div = $(document.createElement('div')),
                 wrapper = $("#ad_box_wrapper"),
-                // element = $(element),
-                // is this used?
-                //scroller = ($(window).scrollTop() + $(window).height()) - $("#ad_box_wrapper").offset().top,
-                // container, should this have a function?
                 more_title = $(document.createElement('h3')),
                 recommend_title = $(document.createElement('h3')),
-                // ul, probably should have some way of returning a container to be appended to, maybee?
                 link_wrap = $(document.createElement('ul'));
-
                 link_wrap.data('article-type', 'article');
             console.log(element);
 
             var ad_number = 0;
             for(i=0; i < json.items.length; i++){
-                    render_item(json.items[i], element, i);
-                    if(i%3 === 0){
-                        ad_loader(ad_number);
-                        recommend_title.insertAfter($(".count"+count));
-                        recommend_title.text('More From ' + r_app.section_name );
-                        ad_number++;
-                    }
+                
+                render_item(json.items[i], element, i);
+
+                if(i%3 === 0){ 
+                    ad_loader(ad_number);
+                    recommend_title.insertAfter($(".count"+count));
+                    recommend_title.text('More From ' + app.section_name );
+                    ad_number++;
+                } 
+                
             }
         }
-    
-
     }
+
+    function eraser(){
+        var a = $("#ad_box_wrapper");
+        var atop = a.position().top;
+        var ad = $('.recommended');
+        var article = $('.scroll_loader_stories');
+
+        $('.recommended').each(function() {
+            var adcount = $(this);
+            var adtop = adcount.position().top;
+                if(adtop + ad.height() > atop + a.height()){
+                    console.log("Removing"+adcount);
+                  adcount.remove();
+
+                }
+        });
+    }
+
     /**
     Make an ajax call, takes a url, data and element that will be acted on
     @param {url} URL to make the api call to
@@ -271,9 +250,6 @@ r_app.scroll_loader = function() {
               console.log( "Error: " + errorThrown );
               console.log( "Status: " + status );
               console.dir( xhr );
-          },
-          complete: function( xhr, status ) {
-              console.log( "Run a message regarless of success." );
           }
         });
     }
@@ -283,38 +259,34 @@ r_app.scroll_loader = function() {
     */
     var count = 0;
     function ad_loader(count) {
-        $("#ad_box_wrapper").append('<div data-boxy="true" id="dfp_300x250_2" data-slot="300x250_2" data-size="300x250" class="count'+count+'"></div>');
+        $("#ad_box_wrapper").append('<div data-boxy="true" id="dfp_300x250_2" data-slot="300x250_2" data-size="300x250" class="count'+count+ ' recommended"></div>');
+        //console.log("count"+count);
         var boxy_ad = $('[data-boxy="true"]');
         //initialize ads
+        eraser();
         init_ads(boxy_ad);
         //remove the data slot so we don't initialize again
         boxy_ad.removeAttr("data-slot");
         boxy_ad.removeAttr("data-boxy");
-        //$('.boxy').removeAttr('class');
-        // count++;
+        
     }
     /**
     Loads up the article shell elements with data from the API
     @param {e} NOT USED
     @param {wrapper} element to load data into 
-    @returns Nothing
+    @returns nothing
     */
     function article_loader(e, wrapper) {
       
-        var limit = Math.round($("#ad_box_wrapper").height()/1200)*3,
-            link_wrap = $("#ad_box_wrapper");
-            
+        var limit = Math.round($("#ad_box_wrapper").outerHeight(true)/920)*3,
+            link_wrap = $("#ad_box_wrapper");  
         var data = get_data(limit);
-        
-        ajax_call("/api/widgets/v1/news/section/"+ r_app.section_url +"/", data, link_wrap[0], box_creator);
-
+        ajax_call("/api/widgets/v1/news/section/"+ app.section_url +"/", data, link_wrap[0], box_creator);
     }
     /**
     Public functions. IMPLICIT self
-    This is for the initr to work properly, it will call init to make sure everything is
-        initialized after the dom is loaded
+    This is for the initr to work properly, it will call init to make sure everything is initialized after the dom is loaded
     */
-    
     return {
         init: function() {
             if(app.fetchFromCache === undefined){
